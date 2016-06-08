@@ -1,0 +1,24 @@
+Overview
+========
+What is the objective?
+
+The objective is to bring SDI to legacy. Subsequent orchestration
+should be easier. If orchestration subsequently becomes more challenging
+then this system has a net cost. Specifically, the region/provider of each node
+should be chosen by default.
+
+
+
+Focus on the most important things
+
+Substrate 
+
+Think of integration of substrate topology.
+
+Cost function integration etc.
+
+Edges:
+bandwidth- The bandwidth requested for this channel.
+
+secure- Whether this channel is secure e.g. uses IPSec or VPN tunnels or is insecure, e.g. VXLAN tunnel.
+
