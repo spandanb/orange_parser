@@ -9,6 +9,7 @@ import sys, os, pdb, argparse
 import base64
 from utils.io_utils import read_yaml, write_yaml 
 from utils.utils import create_and_raise
+from ansible_wrapper import ansible_wrapper
 
 ##############################################
 ################     TODO     ################
@@ -22,6 +23,7 @@ from utils.utils import create_and_raise
 ##############################################
 NODESFILE="./nodes.yaml"
 NODES_ABBR_FILE="./nodes.txt"
+CONFIG_FILE="config.yaml"
 
 def form_components(form):
     """
@@ -327,6 +329,49 @@ def cleanup():
     with open(NODES_ABBR_FILE, 'w') as fileptr:
         fileptr.write('')
 
+def read_config():
+    """
+    Reads the config files and sets the params as 
+    env vars.
+    Returns the config params dict
+    """
+    #FIXME: using envvars doesn't seem like the best way
+    #if things need to be passed around pass them via func calls
+    #or pickle a python object
+    conf = read_yaml(CONFIG_FILE)
+    for param, value in conf.items():
+        os.environ[param] = str(value)
+
+    return conf
+
+def create_master(config):
+    """
+    create the master node.
+    """
+#    savi = get_savi_client()  
+#
+#    #First create a secgroup for master node 
+#    rules = {"ingress": [{'to':22,'from':22, 'protocol':'tcp', 'allowed':['0.0.0.0/0'] },
+#                         {'to':80,'from':80, 'protocol':'tcp', 'allowed':['0.0.0.0/0'] },
+#                         {'to':6633,'from':6633, 'protocol':'tcp', 'allowed':['0.0.0.0/0'] }],
+#             "egress": []
+#            }
+#    group_name = "vino-master"
+#    print "creating secgroup: {}".format(group_name)
+#    savi.create_secgroup(group_name, rules, "Security rules for the vino master node" )
+#    
+#    master_id = savi.create_server("vino-master", "master-sdi.0.7", "m1.medium", 
+#                                   secgroups=[group_name], key_name=config["savi_key_name"])
+#    print "waiting for master to be SSHable"
+#    master_ip = savi.wait_until_sshable(master_id)
+#    if config["assign_master_fip"]:
+#        master_ip = savi.assign_floating_ip(master_id)
+#    print "Running playbook. Master IP is {}".format(master_ip)
+    master_ip="142.150.208.226"
+    ansible_wrapper.playbook(playbook='./playbooks/master/master.yaml', 
+                             hosts={"master": [master_ip]}, 
+                             extra_vars={"master_ip": master_ip})
+
 
 
 def parse_args():
@@ -344,12 +389,19 @@ def parse_args():
     if args.clean_up:  
         cleanup()
     elif args.template_file:
+        #get value of arguments 
         template = args.template_file[0]
         parameters = args.parameters[0] if args.parameters else None
+        config = read_config()
+        #resolve
         others, nodes = parse_template(template, parameters)
         others = instantiate_others(others)
         nodes = instantiate_nodes(nodes)
         write_results(nodes)
+        #create master
+        if config["create_master"]:
+            create_master(config)
+
     else:
         parser.print_help()
         create_and_raise("TemplateNotSpecifiedException", "Please specify a template file")

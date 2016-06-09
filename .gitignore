@@ -1,0 +1,6 @@
+nodes.txt
+nodes.yaml
+*.swp
+*.pyc
+
+config.yaml

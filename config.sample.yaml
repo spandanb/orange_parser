@@ -1,0 +1,20 @@
+#For now, have a flat structure
+#The values for OS_REGION_NAME, etc. are defaults and can
+# be omitted in the topology yaml file.
+
+#[SAVI]
+OS_USERNAME: 
+OS_PASSWORD:
+OS_TENANT_NAME:
+OS_REGION_NAME:
+savi_key_name:
+
+#[AWS]
+AWS_ACCESS_KEY_ID:
+AWS_SECRET_ACCESS_KEY:
+AWS_DEFAULT_REGION: us-east-1
+aws_key_name:
+
+#[Master]
+create_master: true
+assign_master_fip: true
