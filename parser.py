@@ -348,30 +348,36 @@ def create_master(config):
     """
     create the master node.
     """
-#    savi = get_savi_client()  
-#
-#    #First create a secgroup for master node 
-#    rules = {"ingress": [{'to':22,'from':22, 'protocol':'tcp', 'allowed':['0.0.0.0/0'] },
-#                         {'to':80,'from':80, 'protocol':'tcp', 'allowed':['0.0.0.0/0'] },
-#                         {'to':6633,'from':6633, 'protocol':'tcp', 'allowed':['0.0.0.0/0'] }],
-#             "egress": []
-#            }
-#    group_name = "vino-master"
-#    print "creating secgroup: {}".format(group_name)
-#    savi.create_secgroup(group_name, rules, "Security rules for the vino master node" )
-#    
-#    master_id = savi.create_server("vino-master", "master-sdi.0.7", "m1.medium", 
-#                                   secgroups=[group_name], key_name=config["savi_key_name"])
-#    print "waiting for master to be SSHable"
-#    master_ip = savi.wait_until_sshable(master_id)
-#    if config["assign_master_fip"]:
-#        master_ip = savi.assign_floating_ip(master_id)
-#    print "Running playbook. Master IP is {}".format(master_ip)
-    master_ip="142.150.208.226"
-    ansible_wrapper.playbook(playbook='./playbooks/master/master.yaml', 
-                             hosts={"master": [master_ip]}, 
-                             extra_vars={"master_ip": master_ip})
+    savi = get_savi_client()  
+    secgroup = "vino-master"
+    node = {"name"     : "vino-master",
+            "image"    : "master-sdi.0.7",
+            "flavor"   : "m1.medium",
+            "secgroups": [secgroup]}
 
+    #First create a secgroup for master node 
+    rules = {"ingress": [{'to':22,'from':22, 'protocol':'tcp', 'allowed':['0.0.0.0/0'] },
+                         {'to':80,'from':80, 'protocol':'tcp', 'allowed':['0.0.0.0/0'] },
+                         {'to':6633,'from':6633, 'protocol':'tcp', 'allowed':['0.0.0.0/0'] }],
+             "egress": []
+            }
+    print "creating secgroup: {}".format(secgroup)
+    savi.create_secgroup(node["secgroups"][0], rules, "Security rules for the vino master node" )
+    
+    node["id"] = savi.create_server("vino-master", "master-sdi.0.7", "m1.medium", 
+                                   secgroups=[secgroup], key_name=config["savi_key_name"])
+    print "waiting for master to be SSHable"
+    if config["assign_master_fip"]:
+        node["int_ip"] = savi.wait_until_sshable(node["id"])
+        node["ip"] = savi.assign_floating_ip(node["id"])
+    else:
+        node["ip"] = savi.wait_until_sshable(node["id"])
+
+    print "Running playbook. Master IP is {}".format(node["ip"])
+    ansible_wrapper.playbook(playbook='./playbooks/master/master.yaml', 
+                             hosts={"master": [node["ip"]]}, 
+                             extra_vars={"master_ip": master_ip})
+    return node
 
 
 def parse_args():
@@ -397,10 +403,10 @@ def parse_args():
         others, nodes = parse_template(template, parameters)
         others = instantiate_others(others)
         nodes = instantiate_nodes(nodes)
-        write_results(nodes)
         #create master
         if config["create_master"]:
-            create_master(config)
+            nodes.append(create_master(config))
+        write_results(nodes)
 
     else:
         parser.print_help()
