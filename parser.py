@@ -10,6 +10,7 @@ import base64
 from utils.io_utils import read_yaml, write_yaml 
 from utils.utils import create_and_raise
 from ansible_wrapper import ansible_wrapper
+from form_resolver import resolve_parse, resolve_config
 
 ##############################################
 ################     TODO     ################
@@ -25,73 +26,6 @@ NODESFILE="./nodes.yaml"
 NODES_ABBR_FILE="./nodes.txt"
 CONFIG_FILE="config.yaml"
 
-def form_components(form):
-    """
-    Returns the various components of the form
-    """
-    form_arr = form.split("::")
-    if len(form_arr) == 1: return form_arr
-
-    namespace, method = form_arr
-    method, args = method.split("(") #split on left-paren
-    args = args.replace(")", "") #remove right paren
-    args = args.split(",")
-    return namespace, method, args
-
-def resolve_parse(form, params):
-    """
-    There are some special functions that can 
-    be used in template files. An example is
-    "aws::get_image_id(`image_name`)".
-
-    These need to be identified and resolved.
-    These refer to special functions accessible at parse time.
-    These forms can't be nested. 
-    """
-    #Check if indeed this object needs to be resolved
-    form_comp = form_components(form)
-    if len(form_comp) == 1: return form_comp[0]
-
-    namespace, method, args = form_comp
-
-    if namespace == "aws":
-        if method == "get_image_id":
-            return ubuntu[os.environ["AWS_DEFAULT_REGION"]]
-        else:
-            print "Method {} not found".format(method)
-    elif namespace == "utils":
-        if method == "get_param":
-            return params[args[0]]
-        else:
-            print "Method {} not found".format(method)
-
-    else:
-        print "Namespace {} not found".format(namespace)
-   
-
-def resolve_config(form, ip=''):
-    """
-    These are the analogue special functions
-    that can be invoked during instantiation
-    e.g. install ovs.
-
-    """
-    form_comp = form_components(form)
-    if len(form_comp) == 1: return form_comp[0]
-
-    namespace, method, args = form_comp
-
-    if namespace == "utils":
-        if method == "install_openvswitch_2_3_3":
-            print "In install_openvswitch_2_3_3 ..."
-            #NOTE: See if there is better way
-            os.system('scp install_ovs.sh ubuntu@{}:/home/ubuntu'.format(ip) )
-            os.system("ssh ubuntu@{} '/home/ubuntu/install_ovs.sh'".format(ip) )
-
-        else:
-            print "Method {} not found".format(method)
-    else:
-        print "Namespace {} not found".format(namespace)
 
 def parse_declaration(declaration):
     """
