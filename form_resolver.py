@@ -1,10 +1,11 @@
-
+from utils.utils import create_and_raise
 
 """
 Vino templates describe the topology to be deployed and configured.  In some
 cases, you want acccess to entities that exist outside the topology.  This is
 where (special) forms come in.  Forms are functions that can contain arbitrary
 logic. These forms get invoked at either deploy or config.
+NB: Currently, forms can't be nested.
 """
 
 def needs_resolve(form):
@@ -29,24 +30,24 @@ def get_components(form):
 
     return namespace, method, args
 
-def resolve_parse(form, params):
+def resolve_form(form, params=None, nodes=None, *varargs, **kwargs):
     """
-    There are some special functions that can 
-    be used in template files. An example is
-    "aws::get_image_id(`image_name`)".
+    Resolves deploy-time and parse time forms. This requires
+    form names to be unique. 
 
-    These need to be identified and resolved.
-    These refer to special functions accessible at parse time.
-    These forms can't be nested. 
+    Arguments:-
+        form: the form to resolve
+        params: the params to the template
+        nodes: list of nodes
+        args: dict of any unspecified args,
+            caller needs to make sure that the method uses the
+            appropriate name
     """
+
     #Check if indeed this object needs to be resolved
     if not needs_resolve(form): return form
     namespace, method, args = get_components(form)
-
-    #Namespaces have a 1-1 mapping to modules
-    #import importlib
-    #module = importlib.import_module(namespace)
-
+    
     if namespace == "aws":
         if method == "get_image_id":
             ubuntu_amis = {
@@ -55,36 +56,30 @@ def resolve_parse(form, params):
                 'us-west-2':'ami-9abea4fb', #Oregon
             }
             return ubuntu_amis[os.environ["AWS_DEFAULT_REGION"]]
-        else:
-            print "Method {} not found".format(method)
+    
     elif namespace == "utils":
+        #Lookup a param
+        #TODO: To generalize this, need a way of converting user specified params to python datastructs
         if method == "get_param":
             return params[args[0]]
-        else:
-            print "Method {} not found".format(method)
 
-    else:
-        print "Namespace {} not found".format(namespace)
-   
+        elif method == "get_ip":
+            return next(node["ip"] for node in nodes if node['name'] == args[0])
+        
+        elif method == "get_overlay_ip":
+            return next("192.168.{}.{}".format( *node["ip"].split(".")[2:])
+                            for node in nodes if node['name'] == args[0])
 
-def resolve_config(form, ip=''):
-    """
-    These are the analogue special functions
-    that can be invoked during instantiation
-    e.g. install ovs.
-
-    """
-    if not needs_resolve(form): return form
-    namespace, method, args = get_components(form)
-
-    if namespace == "utils":
-        if method == "install_openvswitch_2_3_3":
+        #install OVS
+        elif method == "install_openvswitch_2_3_3":
             print "In install_openvswitch_2_3_3 ..."
-            #NOTE: See if there is better way
-            os.system('scp install_ovs.sh ubuntu@{}:/home/ubuntu'.format(ip) )
-            os.system("ssh ubuntu@{} '/home/ubuntu/install_ovs.sh'".format(ip) )
+            #NOTE: See if there is a better way
+            os.system('scp install_ovs.sh ubuntu@{}:/home/ubuntu'.format(node["ip"]) )
+            os.system("ssh ubuntu@{} '/home/ubuntu/install_ovs.sh'".format(node["ip"]) )
 
-        else:
-            print "Method {} not found".format(method)
-    else:
-        print "Namespace {} not found".format(namespace)
+    create_and_raise("ResolveException", 
+        "Unable to find either namespace '{}' or method '{}'".format(namespace, method))
+
+if __name__ == "__main__":
+    print resolve_form("utils::get_overlay_ip(abcd)", nodes=[{"name":"abcd", "ip":"10.12.1.2"}])
+

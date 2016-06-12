@@ -7,10 +7,10 @@ from multi.aws import get_aws_client, ubuntu
 from vino.servers import get_savi_client
 import sys, os, pdb, argparse
 import base64
-from utils.io_utils import read_yaml, write_yaml 
+from utils.io_utils import read_yaml, write_yaml, log
 from utils.utils import create_and_raise
 from ansible_wrapper import ansible_wrapper
-from form_resolver import resolve_parse, resolve_config
+from form_resolver import resolve_form
 
 ##############################################
 ################     TODO     ################
@@ -55,14 +55,14 @@ def parse_node(resc, params):
 
     node = {}
     #required fields
-    node["image"]  = resolve_parse(resc["image"], params)
+    node["image"]  = resolve_form(resc["image"], params=params)
     node["flavor"] = resc["flavor"]
     node["name"]   = resc["name"]
     node["type"]   = resc["type"]
 
     #Optional Fields
     node["secgroups"] = resc.get("security-groups", [])
-    node["key_name"]  = resolve_parse(resc.get("key-name"), params)
+    node["key_name"]  = resolve_form(resc.get("key-name"), params=params)
     node["region"]    = resc.get("region", "CORE")
     node["role"]      = resc.get("role") #TODO: should be a list
     
@@ -77,7 +77,12 @@ def parse_node(resc, params):
 
     #TODO: check whether need to base64 encode, AWS docs say so, but works w/o anyways
     node["user_data"] = resc.get("user-data", '')
-    node["on_boot"] = resc.get("on-boot")
+    
+    if config not in resc:
+        node["config"] = {}
+    if "extra-vars" not in node["config"]:
+        node["config"]["extra-vars"] = {}
+    
 
     return node
 
@@ -145,7 +150,7 @@ def instantiate_others(others):
 
     for other in others:
         if other["type"] == "security-group":
-            print "Creating secgroup {}".format(other["name"])
+            log("Creating secgroup {}".format(other["name"]))
             rules = {"ingress": other.get("ingress", []), "egress": other.get("egress", [])}
             
             #Creates rules on both AWS and SAVI for current specified region, tenant    
@@ -174,7 +179,7 @@ def instantiate_nodes(nodes):
                 savi.sync_savi_key(node["key_name"])
                 savi_key_synced = True
             
-            print "Booting {} in SAVI".format(node["name"])
+            log("Booting {} in SAVI".format(node["name"]))
             node["id"] = savi.create_server(node['name'], node['image'], node['flavor'], secgroups=node["secgroups"], key_name=node["key_name"])
 
         else: #aws
@@ -182,7 +187,7 @@ def instantiate_nodes(nodes):
                 aws.sync_aws_key(node["key_name"])
                 aws_key_synced = True
 
-            print "Booting {} in AWS".format(node["name"])
+            log("Booting {} in AWS".format(node["name"]))
             node["id"] = aws.create_server(node["image"], node["flavor"], keyname=node["key_name"], user_data=node["user_data"], secgroups=node["secgroups"])[0]
 
     #Waiting-until-built loop
@@ -191,23 +196,36 @@ def instantiate_nodes(nodes):
             node_ip = savi.wait_until_sshable(node["id"])
             #The property 'ip' has value of floating-ip if defined, else ip
             if node["floating_ip"]:
-                print "Requesting floating IP for {}".format(node["id"]) 
+                log("Requesting floating IP for {}".format(node["id"]))
                 node["ip"] = savi.assign_floating_ip(node["id"])
                 node["int_ip"] = node_ip
             else:
                 node["ip"] = node_ip
         else: #aws
             node["ip"] = aws.get_server_ips([node["id"]])[0]
-            #Perform any special on_boot ops
-            if node["on_boot"]:
-                for item in node["on_boot"]:
-                    resolve_config(item, ip=node["ip"])
-
+    
     #Print some info 
     for node in nodes:
-        print "{}({}) is available at {}".format(node["name"], node["id"], node["ip"])
+        log("{}({}) is available at {}".format(node["name"], node["id"], node["ip"]))
 
     return nodes
+
+def configure_nodes(nodes):
+    """
+    Configure each of the nodes
+    """
+    print nodes[0]
+    for node in nodes:
+        if "config" in node:
+            for conf in node["config"]:
+                #resolve extra vars if needed
+                extra_vars = {name: resolve_form(val, nodes=nodes)
+                                 for name, val in conf["extra-vars"].items()}
+                log("Running {} on {}".format(conf["playbook"], node["name"]))
+                ansible_wrapper.playbook(playbook=conf["playbook"],
+                                         hosts={conf["host"]: node["ip"]}, 
+                                         extra_vars=extra_vars)
+        
 
 def write_results(nodes):
     """
@@ -228,34 +246,37 @@ def cleanup():
     try:
         nodes = read_yaml(filepath=NODESFILE)
     except IOError:
-        print "Nothing to delete...."
+        log("Nothing to delete....")
         return 
 
     if not nodes:
-        print "Nothing to delete...."
+        log("Nothing to delete....")
         return 
 
-    aws =  get_aws_client()
-    savi = get_savi_client()  
-    
-    savi_nodes = [node for node in nodes if node["provider"] == "savi"]
-    aws_nodes = [node["id"] for node in nodes if node["provider"] == "aws"]
+    is_savi = lambda node: "provider" not in node or node["provider"] == "savi"
+    is_aws = lambda node: "provider" in node and node["provider"] == "aws"
+    savi_nodes = [node for node in nodes if is_savi(node)]
+    aws_nodes = [node for node in nodes if is_aws(node)]
+  
+    #Lazy load the clients
+    if savi_nodes: savi = get_savi_client()  
+    if aws_nodes: aws = get_aws_client()
 
-    print "Deleting on SAVI nodes..."
+    log("Deleting on SAVI nodes...")
     for node in savi_nodes:
-        print "Deleting {} ({})".format(node["name"], node["id"])
+        log("Deleting {} ({})".format(node["name"], node["id"]))
         try:
             savi.delete_servers(server_id=node["id"])
         except ValueError as err:
-            print "Warning: nodes file ({}) may be out of sync".format(NODESFILE)
+            log("Warning: nodes file ({}) may be out of sync".format(NODESFILE))
     
-    print "Deleting AWS nodes..."
+    log("Deleting AWS nodes...")
     for node in aws_nodes: 
-        print "deleting {}".format(node)
+        log("deleting {}".format(node))
     try:
         aws.delete_servers(aws_nodes)
     except: 
-        print "Warning: nodes file ({}) may be out of sync".format(NODESFILE)
+        log("Warning: nodes file ({}) may be out of sync".format(NODESFILE))
 
     #Nuke the files
     with open(NODESFILE, 'w') as fileptr:
@@ -295,22 +316,22 @@ def create_master(config):
                          {'to':6633,'from':6633, 'protocol':'tcp', 'allowed':['0.0.0.0/0'] }],
              "egress": []
             }
-    print "creating secgroup: {}".format(secgroup)
+    log("creating secgroup: {}".format(secgroup))
     savi.create_secgroup(node["secgroups"][0], rules, "Security rules for the vino master node" )
     
     node["id"] = savi.create_server("vino-master", "master-sdi.0.7", "m1.medium", 
                                    secgroups=[secgroup], key_name=config["savi_key_name"])
-    print "waiting for master to be SSHable"
+    log("waiting for master to be SSHable")
     if config["assign_master_fip"]:
         node["int_ip"] = savi.wait_until_sshable(node["id"])
         node["ip"] = savi.assign_floating_ip(node["id"])
     else:
         node["ip"] = savi.wait_until_sshable(node["id"])
 
-    print "Running playbook. Master IP is {}".format(node["ip"])
+    log("Running playbook. Master IP is {}".format(node["ip"]))
     ansible_wrapper.playbook(playbook='./playbooks/master/master.yaml', 
-                             hosts={"master": [node["ip"]]}, 
-                             extra_vars={"master_ip": master_ip})
+                             hosts={"master": node["ip"]}, 
+                             extra_vars={"master_ip": node["ip"]})
     return node
 
 
@@ -333,14 +354,20 @@ def parse_args():
         template = args.template_file[0]
         parameters = args.parameters[0] if args.parameters else None
         config = read_config()
-        #resolve
+        #resolve 
         others, nodes = parse_template(template, parameters)
+        #instantiate other declarations
         others = instantiate_others(others)
+
+        #instantiate nodes 
         nodes = instantiate_nodes(nodes)
+        write_results(nodes)
         #create master
         if config["create_master"]:
             nodes.append(create_master(config))
         write_results(nodes)
+        #Configure the nodes
+        configure_nodes(nodes)
 
     else:
         parser.print_help()

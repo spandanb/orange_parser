@@ -1,0 +1,9 @@
+[gateway]
+184.72.194.82 ansible_user=ubuntu 
+
+[firewall]
+142.150.208.226 ansible_user=ubuntu 
+
+[webserver]
+184.72.205.185 ansible_user=ubuntu 
+

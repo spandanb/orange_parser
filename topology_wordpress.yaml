@@ -18,6 +18,14 @@ nodes:
         assign-floating-ip: true
         security-groups: 
             - wordpress-vino
+        config:
+            - 
+                playbook: playbooks/firewall/playbook.yaml
+                host: firewall
+                extra-vars:
+                    webserver_ip: utils::get_overlay_ip(vino_webserver)
+                    gateway_ip: utils::get_overlay_ip(vino_gateway)
+
     - 
         name: vino_gateway
         role: gateway
@@ -29,6 +37,13 @@ nodes:
         key-name: utils::get_param(aws_key_name)
         security-groups: 
             - wordpress-vino
+        config:
+            - 
+                playbook: playbooks/gateway/playbook.yaml
+                host: gateway 
+                extra_vars:
+                    - 
+                        webserver_ip: utils::get_overlay_ip(vino_webserver)
 
     - 
         name: vino_webserver
@@ -41,6 +56,11 @@ nodes:
         key-name: utils::get_param(aws_key_name)
         security-groups: 
             - wordpress-vino
+        config:
+            - 
+                playbook: playbooks/webserver/wordpress.yaml
+                host: webserver 
+
 edges:
 
 
@@ -48,7 +68,7 @@ declarations:
     - 
         name: wordpress-vino
         type: security-group
-        description: testing
+        description: security group for vino 
         ingress: 
             - 
                 from: -1 
