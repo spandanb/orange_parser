@@ -4,3 +4,4 @@ nodes.yaml
 *.pyc
 
 config.yaml
+*.retry

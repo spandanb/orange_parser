@@ -63,7 +63,6 @@ nodes:
 
 edges:
 
-
 declarations:
     - 
         name: wordpress-vino
@@ -108,3 +107,10 @@ declarations:
                         0.0.0.0/0
 
         egress: 
+
+#The events should hook into supported events by other platforms and 
+#if those don't exist, then fallback to your own events.
+events:
+    - myevents.py
+
+
