@@ -6,11 +6,12 @@ Parses topology and instantiates nodes.
 from multi.aws import get_aws_client, ubuntu
 from vino.servers import get_savi_client
 import sys, os, pdb, argparse
-import base64
-from utils.io_utils import read_yaml, write_yaml, log
+import base64, time
+from utils.io_utils import read_yaml, write_yaml, log, yaml_to_envvars
 from utils.utils import create_and_raise
 from ansible_wrapper import ansible_wrapper
 from form_resolver import resolve_form
+from itertools import combinations
 
 ##############################################
 ################     TODO     ################
@@ -23,6 +24,7 @@ from form_resolver import resolve_form
 ################    CONSTS    ################
 ##############################################
 NODESFILE="./nodes.yaml"
+EDGESFILE="./edges.yaml"
 NODES_ABBR_FILE="./nodes.txt"
 CONFIG_FILE="config.yaml"
 
@@ -77,14 +79,22 @@ def parse_node(resc, params):
 
     #TODO: check whether need to base64 encode, AWS docs say so, but works w/o anyways
     node["user_data"] = resc.get("user-data", '')
+   
+    node["config"] = resc.get("config", []) 
     
-    if config not in resc:
-        node["config"] = {}
-    if "extra-vars" not in node["config"]:
-        node["config"]["extra-vars"] = {}
-    
-
     return node
+
+def parse_edge(edge):
+    """
+    parse an edge object.
+    """
+    return edge
+
+def mesh_network(nodes):
+    """
+    Returns the mesh representation of the list of nodes
+    """
+    return list(combinations(map(lambda node: node["name"], nodes), 2))
 
 def parse_template(template, user_params):
     """
@@ -111,7 +121,15 @@ def parse_template(template, user_params):
     else:
         nodes = []
 
-    return others, nodes
+    #Parse the edges
+    if "edges" in topology:
+        edges = [parse_edge(resc) for resc in topology["edges"]]
+    else:
+        edges = mesh_network(nodes)
+
+
+
+    return others, nodes, edges
 
 def resolve_params(topo_params, user_params):
     """
@@ -214,20 +232,23 @@ def configure_nodes(nodes):
     """
     Configure each of the nodes
     """
-    print nodes[0]
     for node in nodes:
-        if "config" in node:
-            for conf in node["config"]:
-                #resolve extra vars if needed
+        #a node has a list of configurations
+        for conf in node["config"]:
+            #resolve extra vars if needed
+            if "extra-vars" in conf:
                 extra_vars = {name: resolve_form(val, nodes=nodes)
-                                 for name, val in conf["extra-vars"].items()}
-                log("Running {} on {}".format(conf["playbook"], node["name"]))
-                ansible_wrapper.playbook(playbook=conf["playbook"],
-                                         hosts={conf["host"]: node["ip"]}, 
-                                         extra_vars=extra_vars)
+                             for name, val in conf["extra-vars"].items()}
+            else:
+                extra_vars = {}
+
+            log("Running {} on {}".format(conf["playbook"], node["name"]))
+            ansible_wrapper.playbook(playbook=conf["playbook"],
+                                     hosts={conf["host"]: node["ip"]}, 
+                                     extra_vars=extra_vars)
         
 
-def write_results(nodes):
+def write_results(nodes, edges):
     """
     Writes the results to file
     """
@@ -237,7 +258,7 @@ def write_results(nodes):
         for node in nodes: 
             fileptr.write("{}: {}\n".format(node["name"], node["ip"]))
 
-        
+    write_yaml(edges, filepath=EDGESFILE)    
             
 def cleanup():
     """
@@ -256,7 +277,7 @@ def cleanup():
     is_savi = lambda node: "provider" not in node or node["provider"] == "savi"
     is_aws = lambda node: "provider" in node and node["provider"] == "aws"
     savi_nodes = [node for node in nodes if is_savi(node)]
-    aws_nodes = [node for node in nodes if is_aws(node)]
+    aws_nodes = [node['id'] for node in nodes if is_aws(node)]
   
     #Lazy load the clients
     if savi_nodes: savi = get_savi_client()  
@@ -284,20 +305,13 @@ def cleanup():
     with open(NODES_ABBR_FILE, 'w') as fileptr:
         fileptr.write('')
 
-def read_config():
+def nuke_aws():
     """
-    Reads the config files and sets the params as 
-    env vars.
-    Returns the config params dict
+    Deletes all AWS nodes
     """
-    #FIXME: using envvars doesn't seem like the best way
-    #if things need to be passed around pass them via func calls
-    #or pickle a python object
-    conf = read_yaml(CONFIG_FILE)
-    for param, value in conf.items():
-        os.environ[param] = str(value)
-
-    return conf
+    log("Deleting ALL AWS nodes...")
+    aws = get_aws_client()
+    aws.delete_all()
 
 def create_master(config):
     """
@@ -313,7 +327,8 @@ def create_master(config):
     #First create a secgroup for master node 
     rules = {"ingress": [{'to':22,'from':22, 'protocol':'tcp', 'allowed':['0.0.0.0/0'] },
                          {'to':80,'from':80, 'protocol':'tcp', 'allowed':['0.0.0.0/0'] },
-                         {'to':6633,'from':6633, 'protocol':'tcp', 'allowed':['0.0.0.0/0'] }],
+                         {'to':6633,'from':6633, 'protocol':'tcp', 'allowed':['0.0.0.0/0'] },
+                         {'to':-1,'from':-1, 'protocol':'icmp', 'allowed':['0.0.0.0/0'] }],
              "egress": []
             }
     log("creating secgroup: {}".format(secgroup))
@@ -327,6 +342,7 @@ def create_master(config):
         node["ip"] = savi.assign_floating_ip(node["id"])
     else:
         node["ip"] = savi.wait_until_sshable(node["id"])
+    time.sleep(5) #weird that this is needed
 
     log("Running playbook. Master IP is {}".format(node["ip"]))
     ansible_wrapper.playbook(playbook='./playbooks/master/master.yaml', 
@@ -339,33 +355,46 @@ def parse_args():
     """
     Parse arguments and call yaml parser
     """
+    #If parser gets too complex, consider: http://chase-seibert.github.io/blog/2014/03/21/python-multilevel-argparse.html
     parser = argparse.ArgumentParser(description='Vino command line interface')
     
     parser.add_argument('-f', '--template-file', nargs=1, help="specify the template to use")
     parser.add_argument('-p', '--parameters', nargs=1, help="parameters to the template")
     parser.add_argument('-c', '--clean-up', action="store_true", help="Deletes any provisioned topologies")
+    parser.add_argument('-n', '--nuke-aws', action="store_true", help="Deletes all aws instances")
     
     args = parser.parse_args()
 
     if args.clean_up:  
         cleanup()
-    elif args.template_file:
+        return 
+
+    if args.nuke_aws:
+        nuke_aws()
+        return
+
+    if args.template_file:
         #get value of arguments 
         template = args.template_file[0]
         parameters = args.parameters[0] if args.parameters else None
-        config = read_config()
+        
+        #sets the key-value pairs in CONFIG_FILE as envvars
+        yaml_to_envvars(CONFIG_FILE)
+        conf = read_yaml(CONFIG_FILE)
+
         #resolve 
-        others, nodes = parse_template(template, parameters)
+        others, nodes, edges = parse_template(template, parameters)
         #instantiate other declarations
         others = instantiate_others(others)
 
         #instantiate nodes 
         nodes = instantiate_nodes(nodes)
-        write_results(nodes)
         #create master
         if config["create_master"]:
-            nodes.append(create_master(config))
-        write_results(nodes)
+            #don't modify original nodes array; don't want to call configure nodes on master node
+            write_results(nodes + [create_master(config)], edges)
+        else:
+            write_results(nodes, edges)
         #Configure the nodes
         configure_nodes(nodes)
 

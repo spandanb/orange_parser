@@ -61,7 +61,12 @@ nodes:
                 playbook: playbooks/webserver/wordpress.yaml
                 host: webserver 
 
+#Leave blank for mesh
 edges:
+    -
+        endpoint1: vino_firewall
+        endpoint2: vino_webserver 
+        secure: false
 
 declarations:
     - 
@@ -110,7 +115,7 @@ declarations:
 
 #The events should hook into supported events by other platforms and 
 #if those don't exist, then fallback to your own events.
-events:
-    - myevents.py
+#events:
+#    - myevents.py
 
 

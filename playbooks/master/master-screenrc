@@ -11,6 +11,6 @@ stuff "cd /opt/stack/ryu && /opt/stack/ryu/bin/ryu-manager --flagfile /etc/ryu/r
 screen -t janus bash
 stuff "sleep 10;cd /opt/stack/janus && /opt/stack/janus/bin/janus-init --config-file /etc/janus/janus.conf"
 screen -t vino bash
-stuff "cd /home/ubuntu/vino_orc; git fetch; git checkout no_password; sleep 60;python ./master.py -i `cat ext_ip` -t nodes.yaml"
+stuff "cd /home/ubuntu/vino_orc; git fetch; git checkout no_password; sleep 60;python ./master.py -i `cat ext_ip` -n nodes.yaml -t edges.yaml"
 screen -t portal
 stuff "cd /home/ubuntu/blade; sleep 30; python ./manage.py migrate; sudo python manage.py runserver 0.0.0.0:80"
