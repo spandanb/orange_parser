@@ -1,5 +1,6 @@
 nodes.txt
 nodes.yaml
+edges.yaml
 *.swp
 *.pyc
 

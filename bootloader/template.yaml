@@ -1,0 +1,39 @@
+public_cloud:
+    providers:
+        savi:
+            hw_virt: 
+                enabled: true 
+                ##how many agents to use; needed for nested virt
+                #agent_count: 1 
+                native: true #this means use adaptors
+            os_virt:
+                enabled: true
+        aws:
+            hw_virt: 
+                enabled: true 
+                native: true 
+            os_virt:
+                enabled: true
+        gce:
+            hw_virt: 
+                enabled: true 
+                native: true 
+            os_virt:
+                enabled: true
+            
+vcpe:
+    controllers:
+        -
+            name: controller1
+            substrate_host: savi
+            controller_flavor: m1.medium
+    agents:
+        -
+            hw_virt:
+                enabled: true
+            os_virt:
+                enabled: true
+            username: ubuntu
+            ip_addr: 10.12.1.2
+            #allows multiple controllers agent groupings 
+            controller: controller1
