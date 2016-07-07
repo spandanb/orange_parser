@@ -122,7 +122,7 @@ def parse_template(template, user_params):
         nodes = []
 
     #Parse the edges
-    if "edges" in topology:
+    if "edges" in topology and topology["edges"]:
         edges = [parse_edge(resc) for resc in topology["edges"]]
     else:
         edges = mesh_network(nodes)
@@ -313,6 +313,14 @@ def nuke_aws():
     aws = get_aws_client()
     aws.delete_all()
 
+def nuke_savi(prefix):
+    """
+    Deletes all SAVI nodes
+    """
+    log("Deleting ALL SAVI nodes with prefix {}...".format(prefix))
+    savi = get_savi_client()
+    savi.delete_servers(name_prefix=True, name=prefix)
+
 def create_master(config):
     """
     create the master node.
@@ -362,8 +370,14 @@ def parse_args():
     parser.add_argument('-p', '--parameters', nargs=1, help="parameters to the template")
     parser.add_argument('-c', '--clean-up', action="store_true", help="Deletes any provisioned topologies")
     parser.add_argument('-n', '--nuke-aws', action="store_true", help="Deletes all aws instances")
+    parser.add_argument('--nuke-savi', nargs=1, help="Deletes all savi instances matching with the specified prefix")
     
     args = parser.parse_args()
+
+    #Do this since the envvars are required by multiple sub commands.
+    #sets the key-value pairs in CONFIG_FILE as envvars
+    yaml_to_envvars(CONFIG_FILE)
+    config = read_yaml(CONFIG_FILE)
 
     if args.clean_up:  
         cleanup()
@@ -373,15 +387,16 @@ def parse_args():
         nuke_aws()
         return
 
+    if args.nuke_savi:
+        prefix = args.nuke_savi[0]
+        nuke_savi(prefix)
+        return 
+
     if args.template_file:
         #get value of arguments 
         template = args.template_file[0]
         parameters = args.parameters[0] if args.parameters else None
         
-        #sets the key-value pairs in CONFIG_FILE as envvars
-        yaml_to_envvars(CONFIG_FILE)
-        conf = read_yaml(CONFIG_FILE)
-
         #resolve 
         others, nodes, edges = parse_template(template, parameters)
         #instantiate other declarations

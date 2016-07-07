@@ -63,10 +63,10 @@ nodes:
 
 #Leave blank for mesh
 edges:
-    -
-        endpoint1: vino_firewall
-        endpoint2: vino_webserver 
-        secure: false
+#    -
+#        endpoint1: vino_firewall
+#        endpoint2: vino_webserver 
+#        secure: false
 
 declarations:
     - 
