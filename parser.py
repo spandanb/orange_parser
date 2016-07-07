@@ -341,6 +341,7 @@ def create_master(config):
     node = {"name"     : "vino-master",
             "image"    : "master-sdi.0.7",
             "flavor"   : "m1.medium",
+            "role"     : "master", 
             "secgroups": [secgroup]}
 
     #First create a secgroup for master node 

@@ -5,8 +5,18 @@
     - copy: src=~/.ssh/id_rsa dest=/home/ubuntu/.ssh/id_rsa mode=0600
     - copy: src=~/.ssh/id_rsa.pub dest=/home/ubuntu/.ssh/id_rsa.pub mode=0644
 
-    - name: write ext IP to file
-      shell: echo {{master_ip}} > /home/ubuntu/vino_orc/ext_ip
+    - name: delete ext_ip file
+      file : path=/home/ubuntu/vino_orc/ext_ip state=absent
+      ignore_errors: true 
+
+    - name: create ext_ip file
+      file : path=/home/ubuntu/vino_orc/ext_ip mode=0777 state=touch
+      
+    - name: populate ext_ip file
+      lineinfile: line={{master_ip}} state=present dest=/home/ubuntu/vino_orc/ext_ip
+
+#    - name: write ext IP to file
+#    - shell: echo {{master_ip}} > /home/ubuntu/vino_orc/ext_ip
 
     - name: copy nodes.yaml
       copy: src=../../nodes.yaml dest=/home/ubuntu/vino_orc
