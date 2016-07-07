@@ -14,7 +14,7 @@
       copy: src=snort.conf dest=/home/ubuntu
 
     - name: copy run snort.sh
-      copy: src=run_snort.sh dest=/home/ubuntu mode=0775
+      copy: src=run_snort.sh dest=/home/ubuntu mode=0755
 
     - name: copy screenrc
       copy: src=firewall-screenrc dest=/home/ubuntu/firewall-screenrc
@@ -32,4 +32,6 @@
 
     - name: run firewall
       shell: daemon -- /home/ubuntu/run_snort.sh 
+      ignore_errors: true
+
 

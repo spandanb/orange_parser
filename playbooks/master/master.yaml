@@ -14,6 +14,8 @@
     - name: copy edges.yaml
       copy: src=../../edges.yaml dest=/home/ubuntu/vino_orc
 
+    - pause: seconds=5
+
     - shell: screen -X -S stack quit
       ignore_errors: yes
 

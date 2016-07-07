@@ -228,7 +228,7 @@ def instantiate_nodes(nodes):
 
     return nodes
 
-def configure_nodes(nodes):
+def configure_nodes(nodes, config):
     """
     Configure each of the nodes
     """
@@ -243,6 +243,7 @@ def configure_nodes(nodes):
                 extra_vars = {}
 
             log("Running {} on {}".format(conf["playbook"], node["name"]))
+            log("extra_vars is {}".format(extra_vars))
             ansible_wrapper.playbook(playbook=conf["playbook"],
                                      hosts={conf["host"]: node["ip"]}, 
                                      extra_vars=extra_vars)
@@ -259,6 +260,16 @@ def write_results(nodes, edges):
             fileptr.write("{}: {}\n".format(node["name"], node["ip"]))
 
     write_yaml(edges, filepath=EDGESFILE)    
+
+def read_nodes_edges():
+    """
+    Read the nodes and edges file and returns the object.
+    For debugging / plug and play purposes, i.e. nodes are provisioned
+    but need to be configured.
+    """
+    nodes = read_yaml(filepath=NODESFILE)
+    edges = read_yaml(filepath=EDGESFILE)
+    return nodes, edges
             
 def cleanup():
     """
@@ -371,6 +382,8 @@ def parse_args():
     parser.add_argument('-c', '--clean-up', action="store_true", help="Deletes any provisioned topologies")
     parser.add_argument('-n', '--nuke-aws', action="store_true", help="Deletes all aws instances")
     parser.add_argument('--nuke-savi', nargs=1, help="Deletes all savi instances matching with the specified prefix")
+    parser.add_argument('-d', '--debug', action="store_true", help="Only performs config; requires nodes and edges files to be populated")
+
     
     args = parser.parse_args()
 
@@ -381,18 +394,16 @@ def parse_args():
 
     if args.clean_up:  
         cleanup()
-        return 
 
-    if args.nuke_aws:
+    elif args.nuke_aws:
         nuke_aws()
-        return
 
-    if args.nuke_savi:
+    elif args.nuke_savi:
         prefix = args.nuke_savi[0]
         nuke_savi(prefix)
         return 
 
-    if args.template_file:
+    elif args.template_file:
         #get value of arguments 
         template = args.template_file[0]
         parameters = args.parameters[0] if args.parameters else None
@@ -406,12 +417,17 @@ def parse_args():
         nodes = instantiate_nodes(nodes)
         #create master
         if config["create_master"]:
-            #don't modify original nodes array; don't want to call configure nodes on master node
+            #don't modify original nodes array; don't want to call configure_nodes on master node
             write_results(nodes + [create_master(config)], edges)
         else:
             write_results(nodes, edges)
         #Configure the nodes
-        configure_nodes(nodes)
+        configure_nodes(nodes, config)
+
+    elif args.debug:
+        nodes, edges = read_nodes_edges()
+        #Configure the nodes
+        configure_nodes(nodes, config)
 
     else:
         parser.print_help()

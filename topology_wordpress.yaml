@@ -41,9 +41,8 @@ nodes:
             - 
                 playbook: playbooks/gateway/playbook.yaml
                 host: gateway 
-                extra_vars:
-                    - 
-                        webserver_ip: utils::get_overlay_ip(vino_webserver)
+                extra-vars:
+                    webserver_ip: utils::get_overlay_ip(vino_webserver)
 
     - 
         name: vino_webserver
