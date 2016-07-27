@@ -354,7 +354,7 @@ def create_master(config):
     log("creating secgroup: {}".format(secgroup))
     savi.create_secgroup(node["secgroups"][0], rules, "Security rules for the vino master node" )
     
-    node["id"] = savi.create_server("vino-master", "master-sdi.0.7", "m1.medium", 
+    node["id"] = savi.create_server("vino-master", "vino_master_v1", "m1.medium", 
                                    secgroups=[secgroup], key_name=config["savi_key_name"])
     log("waiting for master to be SSHable")
     if config["assign_master_fip"]:
@@ -416,14 +416,16 @@ def parse_args():
 
         #instantiate nodes 
         nodes = instantiate_nodes(nodes)
+        
+        #Configure the nodes
+        configure_nodes(nodes, config)
+
         #create master
         if config["create_master"]:
             #don't modify original nodes array; don't want to call configure_nodes on master node
             write_results(nodes + [create_master(config)], edges)
         else:
             write_results(nodes, edges)
-        #Configure the nodes
-        configure_nodes(nodes, config)
 
     elif args.debug:
         nodes, edges = read_nodes_edges()

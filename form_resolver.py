@@ -1,4 +1,5 @@
 from utils.utils import create_and_raise
+import os
 
 """
 Vino templates describe the topology to be deployed and configured.  In some
@@ -36,7 +37,7 @@ def resolve_form(form, params=None, nodes=None, *varargs, **kwargs):
     form names to be unique. 
 
     Arguments:-
-        form: the form to resolve
+        form: the form to resolve, (string)
         params: the params to the template
         nodes: list of nodes
         args: dict of any unspecified args,
@@ -47,9 +48,9 @@ def resolve_form(form, params=None, nodes=None, *varargs, **kwargs):
     #Check if indeed this object needs to be resolved
     if not needs_resolve(form): return form
     namespace, method, args = get_components(form)
-    
+
     if namespace == "aws":
-        if method == "get_image_id":
+        if method == "get_ubuntu_image_id":
             ubuntu_amis = {
                 'us-east-1':'ami-fce3c696', #N. Virginia
                 'us-west-1':'ami-06116566', #N. California

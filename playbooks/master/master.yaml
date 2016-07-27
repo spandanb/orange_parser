@@ -15,27 +15,19 @@
     - name: populate ext_ip file
       lineinfile: line={{master_ip}} state=present dest=/home/ubuntu/vino_orc/ext_ip
 
-#    - name: write ext IP to file
-#    - shell: echo {{master_ip}} > /home/ubuntu/vino_orc/ext_ip
-
     - name: copy nodes.yaml
       copy: src=../../nodes.yaml dest=/home/ubuntu/vino_orc
     
     - name: copy edges.yaml
       copy: src=../../edges.yaml dest=/home/ubuntu/vino_orc
 
-    - pause: seconds=5
-
-    - shell: screen -X -S stack quit
-      ignore_errors: yes
-
-    - pause: seconds=5
+    - name: download .tmux.conf
+      get_url: dest=/home/ubuntu/.tmux.conf url=https://raw.githubusercontent.com/spandanb/utils/master/.tmux.conf
 
     - unarchive: src=portal.tar.gz dest=/home/ubuntu
 
-    - copy: src=master-screenrc dest=/home/ubuntu/devstack/stack-screenrc
-    
-    - shell: pip install django isodate
+    - name: install python packages
+      shell: pip install django isodate
       become: true
       ignore_errors: true
 
@@ -43,9 +35,17 @@
       shell: mysql -uroot -pvinopass -e "CREATE DATABASE blade"
       ignore_errors: yes
 
-    - name: run control stack in screen  
-      shell: chdir=/home/ubuntu/devstack ./rejoin-stack.sh
-      async: 0
-      poll: 0
-      ignore_errors: true
+    - name: copy master script
+      copy: src=master-tmux.sh dest=/home/ubuntu/vino_orc/master-tmux.sh mode=0777
 
+     #uses tmux instead of screen
+#    - name: copy new screenrc file
+#      copy: src=master-screenrc dest=/home/ubuntu/devstack/stack-screenrc
+
+    - pause: seconds=60
+
+    - name: run master script 
+      shell: bash /home/ubuntu/vino_orc/master-tmux.sh
+    
+#    - name: run control stack in screen  
+#      shell: chdir=/home/ubuntu/devstack ./rejoin-stack.sh
