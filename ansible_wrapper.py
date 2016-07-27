@@ -51,7 +51,7 @@ class ansible_wrapper(object):
     @staticmethod
     def playbook(playbook=None, hosts=None, 
                  private_key_file='~/.ssh/id_rsa', 
-                 verbosity=1, 
+                 verbosity=1,
                  remote_user='ubuntu', 
                  extra_vars={}):
         """

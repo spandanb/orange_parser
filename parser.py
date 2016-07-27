@@ -254,7 +254,6 @@ def write_results(nodes, edges):
     Writes the results to file
     """
     write_yaml(nodes, filepath=NODESFILE) 
-
     with open(NODES_ABBR_FILE, 'w') as fileptr:
         for node in nodes: 
             fileptr.write("{}: {}\n".format(node["name"], node["ip"]))
@@ -334,7 +333,8 @@ def nuke_savi(prefix):
 
 def create_master(config):
     """
-    create the master node.
+    Provisions the master node. 
+    Returns the node object of the master including the configs.
     """
     savi = get_savi_client()  
     secgroup = "vino-master"
@@ -364,10 +364,14 @@ def create_master(config):
         node["ip"] = savi.wait_until_sshable(node["id"])
     time.sleep(5) #weird that this is needed
 
-    log("Running playbook. Master IP is {}".format(node["ip"]))
-    ansible_wrapper.playbook(playbook='./playbooks/master/master.yaml', 
-                             hosts={"master": node["ip"]}, 
-                             extra_vars={"master_ip": node["ip"]})
+    conf = {
+        "playbook"  : './playbooks/master/master.yaml',
+        "extra-vars": {"master_ip": node["ip"]},
+        "host"     : "master"
+    } 
+    #This is the format that the configure_nodes expects
+    node["config"] = [conf]
+
     return node
 
 
@@ -385,7 +389,6 @@ def parse_args():
     parser.add_argument('--nuke-savi', nargs=1, help="Deletes all savi instances matching with the specified prefix")
     parser.add_argument('-d', '--debug', action="store_true", help="Only performs config; requires nodes and edges files to be populated")
 
-    
     args = parser.parse_args()
 
     #Do this since the envvars are required by multiple sub commands.
@@ -417,17 +420,20 @@ def parse_args():
         #instantiate nodes 
         nodes = instantiate_nodes(nodes)
         
-        #Configure the nodes
-        configure_nodes(nodes, config)
-
         #create master
         if config["create_master"]:
             #don't modify original nodes array; don't want to call configure_nodes on master node
-            write_results(nodes + [create_master(config)], edges)
+            mnode = create_master(config)
+            nodes.append(mnode)
+            write_results(nodes, edges)
         else:
             write_results(nodes, edges)
+        
+        #Configure the nodes
+        configure_nodes(nodes, config)
 
     elif args.debug:
+        #Only runs the configuration scripts
         nodes, edges = read_nodes_edges()
         #Configure the nodes
         configure_nodes(nodes, config)

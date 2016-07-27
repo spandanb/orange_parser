@@ -4,7 +4,7 @@
 SESSION=stack
 
 #Create a new session called $SESSION
-tmux new-session -d -s $SESSION >> /home/ubuntu/foo
+tmux new-session -d -s $SESSION
 
 ##create a new window called foo
 #tmux new-window -t $SESSION:1 -n 'foo'
@@ -40,4 +40,3 @@ sleep 2
 tmux new-window -t $SESSION:6 -n 'portal'
 tmux send-keys "cd /home/ubuntu/blade; sleep 30; python ./manage.py migrate; sudo python manage.py runserver 0.0.0.0:80" C-m
 
-touch fooooooo

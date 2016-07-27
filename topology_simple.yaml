@@ -1,0 +1,83 @@
+parameters:
+    aws_key_name:
+        description: Key name for AWS
+nodes:
+    - 
+        name: vino_node1
+        #role: firewall
+        image: ami-df24d9b2 #ubuntu with ovs, only on us-east-1
+        #image: aws::get_ubuntu_image_id()
+        flavor: t2.nano 
+        provider: aws
+        type: virtual-machine
+        key-name: utils::get_param(aws_key_name) 
+        security-groups: 
+            - vino-secgroup
+#        config:
+#            - 
+#                playbook: playbooks/firewall/playbook.yaml
+#                host: firewall
+#                extra-vars:
+#                    webserver_ip: utils::get_overlay_ip(vino_webserver)
+#                    gateway_ip: utils::get_overlay_ip(vino_gateway)
+    - 
+        name: vino_node2
+        image: ami-df24d9b2
+        flavor: t2.nano 
+        provider: aws
+        type: virtual-machine
+        key-name: utils::get_param(aws_key_name) 
+        security-groups: 
+            - vino-secgroup
+
+
+#Leave blank for mesh
+edges:
+#    -
+#        endpoint1: vino_firewall
+#        endpoint2: vino_webserver 
+#        secure: false
+
+declarations:
+    - 
+        name: vino-secgroup
+        type: security-group
+        description: security group for vino 
+        ingress: 
+            - 
+                from: -1 
+                to: -1
+                protocol: icmp
+                allowed:
+                    -
+                        0.0.0.0/0
+            - 
+                from: 22
+                to: 22
+                protocol: tcp
+                allowed:
+                    -
+                        0.0.0.0/0
+            - 
+                from: 4789 #vxlan 
+                to: 4789
+                protocol: udp
+                allowed:
+                    -
+                        0.0.0.0/0
+            - 
+                from: 6633 
+                to: 6633
+                protocol: tcp
+                allowed:
+                    -
+                        0.0.0.0/0
+
+        egress: 
+
+#The events should hook into supported events by other platforms and 
+#if those don't exist, then fallback to your own events.
+#events:
+#    - myevents.py
+
+

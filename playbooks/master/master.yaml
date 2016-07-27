@@ -15,12 +15,14 @@
     - name: populate ext_ip file
       lineinfile: line={{master_ip}} state=present dest=/home/ubuntu/vino_orc/ext_ip
 
-    - name: copy nodes.yaml
-      copy: src=../../nodes.yaml dest=/home/ubuntu/vino_orc
-    
-    - name: copy edges.yaml
-      copy: src=../../edges.yaml dest=/home/ubuntu/vino_orc
+    - pause: seconds=10
 
+    - name: copy edges.yaml
+      synchronize: src=../../edges.yaml dest=/home/ubuntu/vino_orc
+
+    - name: copy nodes.yaml
+      synchronize: src=../../nodes.yaml dest=/home/ubuntu/vino_orc
+    
     - name: download .tmux.conf
       get_url: dest=/home/ubuntu/.tmux.conf url=https://raw.githubusercontent.com/spandanb/utils/master/.tmux.conf
 
@@ -42,10 +44,10 @@
 #    - name: copy new screenrc file
 #      copy: src=master-screenrc dest=/home/ubuntu/devstack/stack-screenrc
 
-    - pause: seconds=60
+    - pause: seconds=15
 
     - name: run master script 
-      shell: bash /home/ubuntu/vino_orc/master-tmux.sh
+      shell: chdir=/home/ubuntu/vino_orc /home/ubuntu/vino_orc/master-tmux.sh
     
 #    - name: run control stack in screen  
 #      shell: chdir=/home/ubuntu/devstack ./rejoin-stack.sh
