@@ -1,0 +1,10 @@
+#!/usr/bin/python2.7
+"""
+Returns the IP of specified node
+"""
+import sys
+from utils.io_utils import read_yaml
+
+nodes = read_yaml("../../nodes.yaml")
+nip = next(node['ip'] for node in nodes if node['name'] == sys.argv[1])
+print "ubuntu@" + nip + ":/home/ubuntu"

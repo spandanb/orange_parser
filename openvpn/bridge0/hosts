@@ -1,0 +1,14 @@
+#[univ]
+#52.87.215.2 ansible_user=ubuntu
+#54.234.237.63 ansible_user=ubuntu
+#54.209.16.188 ansible_user=ubuntu
+
+[misc]
+52.87.215.2 ansible_user=ubuntu
+
+#[server]
+#52.87.215.2 ansible_user=ubuntu
+#[clients]
+#54.234.237.63 ansible_user=ubuntu
+#54.209.16.188 ansible_user=ubuntu
+
