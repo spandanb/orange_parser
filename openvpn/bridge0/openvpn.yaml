@@ -39,12 +39,16 @@
     - copy: src=keys/server.key dest=/home/ubuntu
     - copy: src=server.conf dest=/home/ubuntu
     - copy: src=server_screen.sh dest=/home/ubuntu mode=0744
+    - copy: src=run-ryu.sh dest=/home/ubuntu mode=0744
+
+    - name: run ryu
+      shell: ./run-ryu.sh 
 
     - name: create tap port
-      shell: chdir=/home/ubuntu bash bridge-start.sh
+      command: chdir=/home/ubuntu ./bridge-start.sh {{server_ip}}
 
     - name: run openpvn in screen
-      shell: chdir=/home/ubuntu bash server_screen.sh 
+      shell: chdir=/home/ubuntu ./server_screen.sh 
 
 - hosts: clients
   remote_user: ubuntu
@@ -66,7 +70,7 @@
       replace: dest=/home/ubuntu/client.conf  regexp=client_key_file_here replace=client1.key
 
     - name: create tap port
-      shell: chdir=/home/ubuntu ./bridge-start.sh
+      command: chdir=/home/ubuntu ./bridge-start.sh {{server_ip}}
 
     - name: run openpvn in screen
       shell: chdir=/home/ubuntu bash client_screen.sh

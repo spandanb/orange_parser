@@ -1,0 +1,17 @@
+---
+- hosts: all 
+  remote_user: ubuntu
+  tasks:
+    - name: stop openvpn 
+      shell: screen -X -S openvpn quit
+      ignore_errors: true
+
+    - name: stop openvpn client
+      shell: screen -X -S openvpn-client quit
+      ignore_errors: true
+
+    - name: remove ovs bridge, tap iface
+      shell: chdir=/home/ubuntu ./bridge-stop.sh 
+
+    - name: kill ryu tmux
+      shell: tmux kill-session -t ryu

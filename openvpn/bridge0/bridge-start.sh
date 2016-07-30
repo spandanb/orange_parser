@@ -5,6 +5,8 @@
 # Requires: bridge-utils
 #################################
 
+controller=tcp:$1:6633
+
 # Define Bridge Interface
 br="br0"
 
@@ -21,11 +23,8 @@ echo Overlay IP addr is $lip
 
 # Define physical ethernet interface to be bridged
 # with TAP interface(s) above.
-#eth="eth0 "
 eth="q1" #This is the 'port' in ovs
 eth_ip=$lip
-#eth_netmask="255.255.0.0"
-#eth_broadcast="172.16.255.255"
 
 for t in $tap; do
     sudo openvpn --mktun --dev $t
@@ -33,6 +32,11 @@ done
  
 #brctl addbr $br #ADD BRIDGE
 sudo ovs-vsctl add-br $br
+sudo ovs-vsctl set-controller $br $controller
+sudo ovs-vsctl set br $br protocols=OpenFlow10
+sudo ovs-vsctl set-fail-mode $br secure
+sudo ovs-vsctl set controller $br connection-mode="out-of-band"
+
 #brctl addif $br $eth #ADD INTERFACE/PORT
 sudo ovs-vsctl add-port $br $eth  -- set interface $eth type=internal
 
