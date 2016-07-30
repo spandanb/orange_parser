@@ -15,6 +15,10 @@ def main():
 
     #generate hosts file
     with open('./openvpn/bridge0/hosts', 'w') as fptr:
+        fptr.write("[univ]\n")
+        for node in nodes:
+            fptr.write("{} ansible_user=ubuntu\n".format(node))
+
         fptr.write("[server]\n")
         fptr.write("{} ansible_user=ubuntu\n".format(server))
 
