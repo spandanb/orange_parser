@@ -1,4 +1,0 @@
-[server]
-54.205.138.151 ansible_user=ubuntu
-[client1]
-54.85.111.179 ansible_user=ubuntu
