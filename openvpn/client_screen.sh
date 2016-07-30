@@ -3,7 +3,7 @@
 source screen_handler.sh
 
 #Parameter
-SESSION=openvpn
+SESSION=openvpn-client
 
 #create session
 create_session $SESSION

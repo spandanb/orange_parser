@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: all 
   remote_user: ubuntu
   tasks:
     - name: add openvpn key
@@ -24,22 +24,22 @@
 
     - name: get screenrc
       get_url: url=https://raw.githubusercontent.com/spandanb/utils/master/.screenrc dest=/home/ubuntu mode=0666
-
+    
+    - copy: src=keys/ca.crt dest=/home/ubuntu
+    - copy: src=screen_handler.sh dest=/home/ubuntu 
+    - copy: src=bridge-start.sh dest=/home/ubuntu  mode=0744
+    - copy: src=bridge-stop.sh dest=/home/ubuntu  mode=0744
+    
 - hosts: server
   remote_user: ubuntu
   tasks: 
-    - copy: src=keys/ca.crt dest=/home/ubuntu
     - copy: src=keys/dh2048.pem dest=/home/ubuntu
     - copy: src=keys/server.crt dest=/home/ubuntu
     - copy: src=keys/server.csr dest=/home/ubuntu
     - copy: src=keys/server.key dest=/home/ubuntu
     - copy: src=server.conf dest=/home/ubuntu
-    - copy: src=screen_handler.sh dest=/home/ubuntu
     - copy: src=server_screen.sh dest=/home/ubuntu mode=0744
 
-    - copy: src=bridge-start.sh dest=/home/ubuntu  mode=0744
-    - copy: src=bridge-stop.sh dest=/home/ubuntu  mode=0744
-    
     - name: create tap port
       shell: chdir=/home/ubuntu bash bridge-start.sh
 
@@ -49,18 +49,13 @@
 - hosts: clients
   remote_user: ubuntu
   tasks: 
-    - copy: src=keys/ca.crt dest=/home/ubuntu
     - copy: src=keys/client1.crt dest=/home/ubuntu
     - copy: src=keys/client1.csr dest=/home/ubuntu
     - copy: src=keys/client1.key dest=/home/ubuntu
 
     - copy: src=client.conf dest=/home/ubuntu
-    - copy: src=screen_handler.sh dest=/home/ubuntu 
     - copy: src=client_screen.sh dest=/home/ubuntu mode=0744
 
-    - copy: src=bridge-start.sh dest=/home/ubuntu mode=0744
-    - copy: src=bridge-stop.sh dest=/home/ubuntu mode=0744
-    
     - name: add server IP 
       replace: dest=/home/ubuntu/client.conf  regexp=my-server-1 replace={{server_ip}}
 
@@ -75,5 +70,4 @@
 
     - name: run openpvn in screen
       shell: chdir=/home/ubuntu bash client_screen.sh
-       
 
