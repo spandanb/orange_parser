@@ -29,7 +29,7 @@
     - unarchive: src=portal.tar.gz dest=/home/ubuntu
 
     - name: install python packages
-      shell: pip install django isodate
+      shell: pip install ansible django isodate
       become: true
       ignore_errors: true
 
@@ -37,16 +37,18 @@
       shell: mysql -uroot -pvinopass -e "CREATE DATABASE blade"
       ignore_errors: yes
 
-    - name: copy master script
+    - name: copy openvpn files
+      synchronize: src=../../openvpn dest=/home/ubuntu 
+
+    - name: copy master tmux script
       copy: src=master-tmux.sh dest=/home/ubuntu/vino_orc/master-tmux.sh mode=0777
 
-     #uses tmux instead of screen
-#    - name: copy new screenrc file
+#    - name: copy master screenrc file
 #      copy: src=master-screenrc dest=/home/ubuntu/devstack/stack-screenrc
 
     - pause: seconds=15
 
-    - name: run master script 
+    - name: run control stack in tmux
       shell: chdir=/home/ubuntu/vino_orc /home/ubuntu/vino_orc/master-tmux.sh
     
 #    - name: run control stack in screen  

@@ -8,7 +8,7 @@
 controller=tcp:$1:6633
 
 # Define Bridge Interface
-br="br0"
+br="br-int"
 
 # Define list of TAP interfaces to be bridged,
 # for example tap="tap0 tap1 tap2".

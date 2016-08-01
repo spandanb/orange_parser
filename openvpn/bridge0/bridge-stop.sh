@@ -5,7 +5,7 @@
 ####################################
 
 # Define Bridge Interface
-br="br0"
+br="br-int"
 
 eth="q1"
 

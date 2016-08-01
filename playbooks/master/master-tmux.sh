@@ -33,10 +33,11 @@ tmux send-keys "sleep 10;cd /opt/stack/janus && /opt/stack/janus/bin/janus-init 
 
 sleep 2
 
-tmux new-window -t $SESSION:5 -n 'vino'
-tmux send-keys "cd /home/ubuntu/vino_orc; git fetch; git checkout no_password; sleep 60;python ./master.py -i `cat ext_ip` -n nodes.yaml -e edges.yaml" C-m
+tmux new-window -t $SESSION:5 -n 'portal'
+tmux send-keys "cd /home/ubuntu/blade; sleep 30; python ./manage.py migrate; sudo python manage.py runserver 0.0.0.0:80" C-m
 
 sleep 2
-tmux new-window -t $SESSION:6 -n 'portal'
-tmux send-keys "cd /home/ubuntu/blade; sleep 30; python ./manage.py migrate; sudo python manage.py runserver 0.0.0.0:80" C-m
+
+tmux new-window -t $SESSION:6 -n 'vino'
+tmux send-keys "cd /home/ubuntu/vino_orc; git fetch; git checkout sec_tun ; sleep 60; python master.py -i `cat ext_ip` -n nodes.yaml -e edges.yaml" C-m
 

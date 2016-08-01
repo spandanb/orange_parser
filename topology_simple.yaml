@@ -20,15 +20,15 @@ nodes:
         key-name: utils::get_param(aws_key_name) 
         security-groups: 
             - vino-secgroup
-    - 
-        name: vino_node3
-        image: ami-df24d9b2
-        flavor: t2.nano 
-        provider: aws
-        type: virtual-machine
-        key-name: utils::get_param(aws_key_name) 
-        security-groups: 
-            - vino-secgroup
+#    - 
+#        name: vino_node3
+#        image: ami-df24d9b2
+#        flavor: t2.nano 
+#        provider: aws
+#        type: virtual-machine
+#        key-name: utils::get_param(aws_key_name) 
+#        security-groups: 
+#            - vino-secgroup
 
 
 #Leave blank for mesh
