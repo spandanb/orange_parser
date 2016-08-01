@@ -15,6 +15,10 @@ AWS_SECRET_ACCESS_KEY:
 AWS_DEFAULT_REGION: us-east-1
 aws_key_name:
 
+#[GCE]
+GCE_CLIENT_ID: 
+GCE_CLIENT_SECRET: 
+
 #[Master]
 create_master: true
 assign_master_fip: true
