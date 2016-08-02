@@ -8,13 +8,16 @@ CURPATH=$EXECPATH/evaluation
 RESULTS=$CURPATH/results
 MRESULTS=$CURPATH/mresults #meta-results
 
-cd $EXECPATH 
-cat /dev/null > $RESULTS
+for j in `seq 1 5`; 
+do
+    cat /dev/null > $RESULTS$j
+done
 cat /dev/null > $MRESULTS
 
+cd $EXECPATH 
 for j in `seq 1 5`;
 do
-    for i in `seq 1 10`;
+    for i in `seq 1 5`;
     do 
         ./parser.py -f "topo/topology$j.yaml" >> $RESULTS$j
     done
