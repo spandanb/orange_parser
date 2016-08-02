@@ -417,7 +417,7 @@ def parse_args():
         #resolve 
         others, nodes, edges = parse_template(template, parameters)
         #instantiate other declarations
-        #others = instantiate_others(others)
+        others = instantiate_others(others)
 
         #instantiate nodes 
         nodes = instantiate_nodes(nodes)

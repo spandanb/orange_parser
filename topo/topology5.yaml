@@ -1,0 +1,148 @@
+parameters:
+    aws_key_name:
+        description: Key name for AWS
+nodes:
+    - 
+        name: vino_node1
+        image: ami-df24d9b2 #ubuntu with ovs, only on us-east-1
+        flavor: t2.nano 
+        provider: aws
+        type: virtual-machine
+        key-name: utils::get_param(aws_key_name) 
+        security-groups: 
+            - vino-secgroup
+    - 
+        name: vino_node2
+        image: ami-df24d9b2
+        flavor: t2.nano 
+        provider: aws
+        type: virtual-machine
+        key-name: utils::get_param(aws_key_name) 
+        security-groups: 
+            - vino-secgroup
+    - 
+        name: vino_node3
+        image: ami-df24d9b2 #ubuntu with ovs, only on us-east-1
+        flavor: t2.nano 
+        provider: aws
+        type: virtual-machine
+        key-name: utils::get_param(aws_key_name) 
+        security-groups: 
+            - vino-secgroup
+    - 
+        name: vino_node4
+        image: ami-df24d9b2
+        flavor: t2.nano 
+        provider: aws
+        type: virtual-machine
+        key-name: utils::get_param(aws_key_name) 
+        security-groups: 
+            - vino-secgroup
+    - 
+        name: vino_node5
+        image: ami-df24d9b2 #ubuntu with ovs, only on us-east-1
+        flavor: t2.nano 
+        provider: aws
+        type: virtual-machine
+        key-name: utils::get_param(aws_key_name) 
+        security-groups: 
+            - vino-secgroup
+    - 
+        name: vino_node6
+        image: ami-df24d9b2
+        flavor: t2.nano 
+        provider: aws
+        type: virtual-machine
+        key-name: utils::get_param(aws_key_name) 
+        security-groups: 
+            - vino-secgroup
+    - 
+        name: vino_node7
+        image: ami-df24d9b2 #ubuntu with ovs, only on us-east-1
+        flavor: t2.nano 
+        provider: aws
+        type: virtual-machine
+        key-name: utils::get_param(aws_key_name) 
+        security-groups: 
+            - vino-secgroup
+    - 
+        name: vino_node8
+        image: ami-df24d9b2
+        flavor: t2.nano 
+        provider: aws
+        type: virtual-machine
+        key-name: utils::get_param(aws_key_name) 
+        security-groups: 
+            - vino-secgroup
+    - 
+        name: vino_node9
+        image: ami-df24d9b2 #ubuntu with ovs, only on us-east-1
+        flavor: t2.nano 
+        provider: aws
+        type: virtual-machine
+        key-name: utils::get_param(aws_key_name) 
+        security-groups: 
+            - vino-secgroup
+    - 
+        name: vino_node10
+        image: ami-df24d9b2
+        flavor: t2.nano 
+        provider: aws
+        type: virtual-machine
+        key-name: utils::get_param(aws_key_name) 
+        security-groups: 
+            - vino-secgroup
+    - 
+        name: vino_node11
+        image: ami-df24d9b2 #ubuntu with ovs, only on us-east-1
+        flavor: t2.nano 
+        provider: aws
+        type: virtual-machine
+        key-name: utils::get_param(aws_key_name) 
+        security-groups: 
+            - vino-secgroup
+    - 
+        name: vino_node12
+        image: ami-df24d9b2
+        flavor: t2.nano 
+        provider: aws
+        type: virtual-machine
+        key-name: utils::get_param(aws_key_name) 
+        security-groups: 
+            - vino-secgroup
+    - 
+        name: vino_node13
+        image: ami-df24d9b2 #ubuntu with ovs, only on us-east-1
+        flavor: t2.nano 
+        provider: aws
+        type: virtual-machine
+        key-name: utils::get_param(aws_key_name) 
+        security-groups: 
+            - vino-secgroup
+    - 
+        name: vino_node14
+        image: ami-df24d9b2
+        flavor: t2.nano 
+        provider: aws
+        type: virtual-machine
+        key-name: utils::get_param(aws_key_name) 
+        security-groups: 
+            - vino-secgroup
+    - 
+        name: vino_node15
+        image: ami-df24d9b2 #ubuntu with ovs, only on us-east-1
+        flavor: t2.nano 
+        provider: aws
+        type: virtual-machine
+        key-name: utils::get_param(aws_key_name) 
+        security-groups: 
+            - vino-secgroup
+    - 
+        name: vino_node16
+        image: ami-df24d9b2
+        flavor: t2.nano 
+        provider: aws
+        type: virtual-machine
+        key-name: utils::get_param(aws_key_name) 
+        security-groups: 
+            - vino-secgroup

@@ -6,15 +6,23 @@ EXECPATH=/home/ubuntu/orange/parser
 CURPATH=$EXECPATH/evaluation  
 #The results file
 RESULTS=$CURPATH/results
+MRESULTS=$CURPATH/mresults #meta-results
 
 cd $EXECPATH 
 cat /dev/null > $RESULTS
+cat /dev/null > $MRESULTS
 
-for i in `seq 1 100`;
-do 
-    ./parser.py -f topology_simple.yaml >> $RESULTS
+for j in `seq 1 5`;
+do
+    for i in `seq 1 10`;
+    do 
+        ./parser.py -f "topo/topology$j.yaml" >> $RESULTS$j
+    done
 done
 
 cd $CURPATH
-result=python get_avg.py 
-echo "AVG=$result" >>  $RESULTS
+for j in `seq 1 5`;
+do
+    result=`python get_avg.py $RESULTS$j`
+    echo "AVG$j=$result" >>  $MRESULTS
+done
