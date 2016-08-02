@@ -1,0 +1,7 @@
+This test determines the execution time of the parser, i.e. 
+the time overhead of the parser without any API calls.
+
+To execute, run `./parser.sh`, this generates `results`.
+The result is printed and stored as the tail element in results. 
+i.e. tail -1 results
+
