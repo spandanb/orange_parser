@@ -199,7 +199,7 @@ def instantiate_nodes(nodes):
                 savi_key_synced = True
             
             log("Booting {} in SAVI".format(node["name"]))
-            #node["id"] = savi.create_server(node['name'], node['image'], node['flavor'], secgroups=node["secgroups"], key_name=node["key_name"])
+            node["id"] = savi.create_server(node['name'], node['image'], node['flavor'], secgroups=node["secgroups"], key_name=node["key_name"])
 
         else: #aws
             if not aws_key_synced:
@@ -207,8 +207,7 @@ def instantiate_nodes(nodes):
                 aws_key_synced = True
 
             log("Booting {} in AWS".format(node["name"]))
-            #node["id"] = aws.create_server(node["image"], node["flavor"], keyname=node["key_name"], user_data=node["user_data"], secgroups=node["secgroups"])[0]
-    return
+            node["id"] = aws.create_server(node["image"], node["flavor"], keyname=node["key_name"], user_data=node["user_data"], secgroups=node["secgroups"])[0]
 
     #Waiting-until-built loop
     for node in nodes:
@@ -421,7 +420,6 @@ def parse_args():
 
         #instantiate nodes 
         nodes = instantiate_nodes(nodes)
-        return  
         #create master
         if config["create_master"]:
             #don't modify original nodes array; don't want to call configure_nodes on master node

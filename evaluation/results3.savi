@@ -1,0 +1,25 @@
+Booting vino_node1 in SAVI *****************************************************
+
+Booting vino_node2 in SAVI *****************************************************
+
+Booting vino_node3 in SAVI *****************************************************
+
+Booting vino_node4 in SAVI *****************************************************
+
+Trying ssh ubuntu@10.12.1.65
+Successfully ssh'ed ubuntu@10.12.1.65
+Trying ssh ubuntu@10.12.1.7
+Successfully ssh'ed ubuntu@10.12.1.7
+Trying ssh ubuntu@10.12.1.69
+Successfully ssh'ed ubuntu@10.12.1.69
+Trying ssh ubuntu@10.12.1.71
+Successfully ssh'ed ubuntu@10.12.1.71
+vino_node1(ca060095-92f4-47d2-b730-cd2c0bf70920) is available at 10.12.1.65 ****
+
+vino_node2(4063d640-2bcc-413a-9d7d-eba829439615) is available at 10.12.1.7 *****
+
+vino_node3(61ca619d-4a65-46d1-a3dc-5f7fb1a37ed3) is available at 10.12.1.69 ****
+
+vino_node4(c87f59fc-208e-4739-8b17-165f39283f0a) is available at 10.12.1.71 ****
+
+128.043931007

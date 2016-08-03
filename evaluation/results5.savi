@@ -1,0 +1,97 @@
+Booting vino_node1 in SAVI *****************************************************
+
+Booting vino_node2 in SAVI *****************************************************
+
+Booting vino_node3 in SAVI *****************************************************
+
+Booting vino_node4 in SAVI *****************************************************
+
+Booting vino_node5 in SAVI *****************************************************
+
+Booting vino_node6 in SAVI *****************************************************
+
+Booting vino_node7 in SAVI *****************************************************
+
+Booting vino_node8 in SAVI *****************************************************
+
+Booting vino_node9 in SAVI *****************************************************
+
+Booting vino_node10 in SAVI ****************************************************
+
+Booting vino_node11 in SAVI ****************************************************
+
+Booting vino_node12 in SAVI ****************************************************
+
+Booting vino_node13 in SAVI ****************************************************
+
+Booting vino_node14 in SAVI ****************************************************
+
+Booting vino_node15 in SAVI ****************************************************
+
+Booting vino_node16 in SAVI ****************************************************
+
+Trying ssh ubuntu@10.12.1.80
+Successfully ssh'ed ubuntu@10.12.1.80
+Trying ssh ubuntu@10.12.1.65
+Successfully ssh'ed ubuntu@10.12.1.65
+Trying ssh ubuntu@10.12.1.73
+Successfully ssh'ed ubuntu@10.12.1.73
+Trying ssh ubuntu@10.12.1.81
+Successfully ssh'ed ubuntu@10.12.1.81
+Trying ssh ubuntu@10.12.1.8
+Successfully ssh'ed ubuntu@10.12.1.8
+Trying ssh ubuntu@10.12.1.69
+Successfully ssh'ed ubuntu@10.12.1.69
+Trying ssh ubuntu@10.12.1.75
+Successfully ssh'ed ubuntu@10.12.1.75
+Trying ssh ubuntu@10.12.1.7
+Successfully ssh'ed ubuntu@10.12.1.7
+Trying ssh ubuntu@10.12.1.71
+Successfully ssh'ed ubuntu@10.12.1.71
+Trying ssh ubuntu@10.12.1.74
+Successfully ssh'ed ubuntu@10.12.1.74
+Trying ssh ubuntu@10.12.1.72
+Successfully ssh'ed ubuntu@10.12.1.72
+Trying ssh ubuntu@10.12.1.79
+Successfully ssh'ed ubuntu@10.12.1.79
+Trying ssh ubuntu@10.12.1.76
+Successfully ssh'ed ubuntu@10.12.1.76
+Trying ssh ubuntu@10.12.1.77
+Successfully ssh'ed ubuntu@10.12.1.77
+Trying ssh ubuntu@10.12.1.78
+Successfully ssh'ed ubuntu@10.12.1.78
+Trying ssh ubuntu@10.12.1.82
+Successfully ssh'ed ubuntu@10.12.1.82
+vino_node1(46432682-cde2-4235-8e8e-6762cfe0b72c) is available at 10.12.1.80 ****
+
+vino_node2(1bb16950-8367-4c8b-8c0f-f2ea2e3bcbc4) is available at 10.12.1.65 ****
+
+vino_node3(3a93fe8a-b72a-4d98-a78d-32a0417dfd68) is available at 10.12.1.73 ****
+
+vino_node4(28f3f78e-b88c-4090-8487-64b445adba13) is available at 10.12.1.81 ****
+
+vino_node5(3e02f5f5-d93c-4cf0-8f6d-38f028e4dab1) is available at 10.12.1.8 *****
+
+vino_node6(8bcc40bc-68e9-440c-8932-f1c095ec6d37) is available at 10.12.1.69 ****
+
+vino_node7(7edb0832-783b-4f75-872f-76fa37ed42cc) is available at 10.12.1.75 ****
+
+vino_node8(d3e139cd-80dd-4122-83d2-c2071d41d5ff) is available at 10.12.1.7 *****
+
+vino_node9(7fcb7b13-d774-47e3-b4fc-4cd3ee48c5d5) is available at 10.12.1.71 ****
+
+vino_node10(3d79c4b9-ef64-4c7f-b03d-d73aa1a6aabb) is available at 10.12.1.74 ***
+
+vino_node11(5cded162-ed20-4ae5-ab02-71ceeb9ed942) is available at 10.12.1.72 ***
+
+vino_node12(47a3e42b-5144-481e-8d6b-14474451dc3f) is available at 10.12.1.79 ***
+
+vino_node13(b7bce48e-04d4-468d-b9e1-ac0258fc7431) is available at 10.12.1.76 ***
+
+vino_node14(c9530221-2b79-4ba4-b880-98b41575b778) is available at 10.12.1.77 ***
+
+vino_node15(7fabd350-635c-440c-833e-ed9526dd4d3d) is available at 10.12.1.78 ***
+
+vino_node16(56854ed0-4821-4a34-b00b-f30b42027fec) is available at 10.12.1.82 ***
+
+332.347186089

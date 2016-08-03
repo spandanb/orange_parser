@@ -1,0 +1,97 @@
+Booting vino_node1 in AWS ******************************************************
+
+Booting vino_node2 in AWS ******************************************************
+
+Booting vino_node3 in AWS ******************************************************
+
+Booting vino_node4 in AWS ******************************************************
+
+Booting vino_node5 in AWS ******************************************************
+
+Booting vino_node6 in AWS ******************************************************
+
+Booting vino_node7 in AWS ******************************************************
+
+Booting vino_node8 in AWS ******************************************************
+
+Booting vino_node9 in AWS ******************************************************
+
+Booting vino_node10 in AWS *****************************************************
+
+Booting vino_node11 in AWS *****************************************************
+
+Booting vino_node12 in AWS *****************************************************
+
+Booting vino_node13 in AWS *****************************************************
+
+Booting vino_node14 in AWS *****************************************************
+
+Booting vino_node15 in AWS *****************************************************
+
+Booting vino_node16 in AWS *****************************************************
+
+Trying ssh ubuntu@54.84.119.184
+Successfully ssh'ed ubuntu@54.84.119.184
+Trying ssh ubuntu@52.87.244.74
+Successfully ssh'ed ubuntu@52.87.244.74
+Trying ssh ubuntu@54.172.54.240
+Successfully ssh'ed ubuntu@54.172.54.240
+Trying ssh ubuntu@54.88.34.102
+Successfully ssh'ed ubuntu@54.88.34.102
+Trying ssh ubuntu@52.87.191.1
+Successfully ssh'ed ubuntu@52.87.191.1
+Trying ssh ubuntu@52.87.183.197
+Successfully ssh'ed ubuntu@52.87.183.197
+Trying ssh ubuntu@52.87.183.24
+Successfully ssh'ed ubuntu@52.87.183.24
+Trying ssh ubuntu@52.87.234.9
+Successfully ssh'ed ubuntu@52.87.234.9
+Trying ssh ubuntu@54.173.23.117
+Successfully ssh'ed ubuntu@54.173.23.117
+Trying ssh ubuntu@52.91.72.26
+Successfully ssh'ed ubuntu@52.91.72.26
+Trying ssh ubuntu@54.175.186.103
+Successfully ssh'ed ubuntu@54.175.186.103
+Trying ssh ubuntu@54.84.30.75
+Successfully ssh'ed ubuntu@54.84.30.75
+Trying ssh ubuntu@54.196.14.221
+Successfully ssh'ed ubuntu@54.196.14.221
+Trying ssh ubuntu@54.175.215.15
+Successfully ssh'ed ubuntu@54.175.215.15
+Trying ssh ubuntu@54.152.199.15
+Successfully ssh'ed ubuntu@54.152.199.15
+Trying ssh ubuntu@54.205.41.166
+Successfully ssh'ed ubuntu@54.205.41.166
+vino_node1(i-093f23ffcf27c504e) is available at 54.84.119.184 ******************
+
+vino_node2(i-053906c2dfef33b31) is available at 52.87.244.74 *******************
+
+vino_node3(i-0271978dffc712c5a) is available at 54.172.54.240 ******************
+
+vino_node4(i-0f4d47ab330730885) is available at 54.88.34.102 *******************
+
+vino_node5(i-05039fe323cd876f1) is available at 52.87.191.1 ********************
+
+vino_node6(i-05deac4b21f767f69) is available at 52.87.183.197 ******************
+
+vino_node7(i-08b51e24216954a5b) is available at 52.87.183.24 *******************
+
+vino_node8(i-0a37455dd15a85cbd) is available at 52.87.234.9 ********************
+
+vino_node9(i-004d8254a48fe19ae) is available at 54.173.23.117 ******************
+
+vino_node10(i-0be26e3d287e34905) is available at 52.91.72.26 *******************
+
+vino_node11(i-06cfc6bcf65d3b730) is available at 54.175.186.103 ****************
+
+vino_node12(i-0fe98461642dc5591) is available at 54.84.30.75 *******************
+
+vino_node13(i-03dc6c8548d8b9541) is available at 54.196.14.221 *****************
+
+vino_node14(i-061e9a441572ee16f) is available at 54.175.215.15 *****************
+
+vino_node15(i-0c1d1075559b1e91d) is available at 54.152.199.15 *****************
+
+vino_node16(i-0a27ec6f1e6f09d70) is available at 54.205.41.166 *****************
+
+86.6466450691

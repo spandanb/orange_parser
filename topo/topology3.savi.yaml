@@ -1,0 +1,45 @@
+parameters:
+    savi_key_name:
+        description: Key name for SAVI
+    
+nodes:
+    - 
+        name: vino_node1
+        image: Ubuntu64-1404-OVS 
+        flavor: m1.small 
+        provider: savi 
+        tenant: demo2
+        type: virtual-machine
+        key-name: utils::get_param(savi_key_name) 
+        security-groups: 
+            - vino-secgroup
+    - 
+        name: vino_node2
+        image: Ubuntu64-1404-OVS 
+        flavor: m1.small 
+        provider: savi 
+        tenant: demo2
+        type: virtual-machine
+        key-name: utils::get_param(savi_key_name) 
+        security-groups: 
+            - vino-secgroup
+    - 
+        name: vino_node3
+        image: Ubuntu64-1404-OVS 
+        flavor: m1.small 
+        provider: savi 
+        tenant: demo2
+        type: virtual-machine
+        key-name: utils::get_param(savi_key_name) 
+        security-groups: 
+            - vino-secgroup
+    - 
+        name: vino_node4
+        image: Ubuntu64-1404-OVS 
+        flavor: m1.small 
+        provider: savi 
+        tenant: demo2
+        type: virtual-machine
+        key-name: utils::get_param(savi_key_name) 
+        security-groups: 
+            - vino-secgroup

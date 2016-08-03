@@ -1,0 +1,49 @@
+Booting vino_node1 in AWS ******************************************************
+
+Booting vino_node2 in AWS ******************************************************
+
+Booting vino_node3 in AWS ******************************************************
+
+Booting vino_node4 in AWS ******************************************************
+
+Booting vino_node5 in AWS ******************************************************
+
+Booting vino_node6 in AWS ******************************************************
+
+Booting vino_node7 in AWS ******************************************************
+
+Booting vino_node8 in AWS ******************************************************
+
+Trying ssh ubuntu@54.174.81.231
+Successfully ssh'ed ubuntu@54.174.81.231
+Trying ssh ubuntu@54.211.55.186
+Successfully ssh'ed ubuntu@54.211.55.186
+Trying ssh ubuntu@52.91.113.143
+Successfully ssh'ed ubuntu@52.91.113.143
+Trying ssh ubuntu@54.175.117.175
+Successfully ssh'ed ubuntu@54.175.117.175
+Trying ssh ubuntu@54.152.255.18
+Successfully ssh'ed ubuntu@54.152.255.18
+Trying ssh ubuntu@54.173.56.45
+Successfully ssh'ed ubuntu@54.173.56.45
+Trying ssh ubuntu@52.91.243.77
+Successfully ssh'ed ubuntu@52.91.243.77
+Trying ssh ubuntu@52.91.203.138
+Successfully ssh'ed ubuntu@52.91.203.138
+vino_node1(i-0530993f984df8a35) is available at 54.174.81.231 ******************
+
+vino_node2(i-031e4039b229e9bc3) is available at 54.211.55.186 ******************
+
+vino_node3(i-0cdb8cfd0ed92e8c0) is available at 52.91.113.143 ******************
+
+vino_node4(i-0c3fa3bd874ecee25) is available at 54.175.117.175 *****************
+
+vino_node5(i-0921ac398e4336247) is available at 54.152.255.18 ******************
+
+vino_node6(i-0aae4ed16579929ef) is available at 54.173.56.45 *******************
+
+vino_node7(i-08d63a87280d35348) is available at 52.91.243.77 *******************
+
+vino_node8(i-09df7dd0f2a74f71a) is available at 52.91.203.138 ******************
+
+75.2786910534
