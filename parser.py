@@ -331,6 +331,19 @@ def nuke_savi(prefix):
     savi = get_savi_client()
     savi.delete_servers(name_prefix=True, name=prefix)
 
+def aws_addr_map():
+    """
+    Print the AWS local IP to public IP map
+    """
+    aws = get_aws_client()
+    addr_map = aws.get_addr_map()
+
+    print 'Private DNS'.center(16) + 'Public IP'.center(16)
+    print "="*32
+    for priv, pub in addr_map: 
+        print '{0: <16}: {1: <16}'.format(priv, pub)
+
+
 def create_master(config):
     """
     Provisions the master node. 
@@ -388,6 +401,8 @@ def parse_args():
     parser.add_argument('-n', '--nuke-aws', action="store_true", help="Deletes all aws instances")
     parser.add_argument('--nuke-savi', nargs=1, help="Deletes all savi instances matching with the specified prefix")
     parser.add_argument('-d', '--debug', action="store_true", help="Only performs config; requires nodes and edges files to be populated")
+    parser.add_argument('--aws-addr-map', action="store_true", help="Prints the address map")
+
 
     args = parser.parse_args()
 
@@ -437,6 +452,9 @@ def parse_args():
         nodes, edges = read_nodes_edges()
         #Configure the nodes
         configure_nodes(nodes, config)
+
+    elif args.aws_addr_map:
+       aws_addr_map() 
 
     else:
         parser.print_help()
