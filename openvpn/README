@@ -1,0 +1,14 @@
+This sets up OpenVPN tunnels. 
+
+See bridge0 for TAP devices and L2 tunnels.
+See route for TUN devices and L3 tunnels. 
+
+L2 Setup
+========
+python gen_openvpn.py
+cd bridge0
+./run.sh
+
+
+
+
