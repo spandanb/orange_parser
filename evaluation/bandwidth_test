@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#install iperf
+sudo apt-get install iperf -y
+
+#On one machine run the iperf server
+iperf -s
+
+#On the other machine
+iperf -c <<addr of server>>

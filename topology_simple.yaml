@@ -1,11 +1,13 @@
 parameters:
     aws_key_name:
         description: Key name for AWS
+    savi_key_name:
+        description: Key name for SAVI
 nodes:
     - 
         name: vino_node1
         image: ami-df24d9b2 #ubuntu with ovs, only on us-east-1
-        flavor: t2.nano 
+        flavor: t2.micro 
         provider: aws
         type: virtual-machine
         key-name: utils::get_param(aws_key_name) 
@@ -13,23 +15,24 @@ nodes:
             - vino-secgroup
     - 
         name: vino_node2
-        image: ami-df24d9b2
-        flavor: t2.nano 
+        image: ami-df24d9b2 #ubuntu with ovs, only on us-east-1
+        flavor: t2.micro 
         provider: aws
         type: virtual-machine
         key-name: utils::get_param(aws_key_name) 
         security-groups: 
             - vino-secgroup
 #    - 
-#        name: vino_node3
-#        image: ami-df24d9b2
-#        flavor: t2.nano 
-#        provider: aws
+#        name: vino_node2
+#        image: Ubuntu64-1404-OVS 
+#        flavor: m1.small
+#        provider: savi
+#        tenant: demo2
 #        type: virtual-machine
-#        key-name: utils::get_param(aws_key_name) 
+#        assign-floating-ip: true
+#        key-name: utils::get_param(savi_key_name) 
 #        security-groups: 
 #            - vino-secgroup
-
 
 #Leave blank for mesh
 edges:
@@ -40,7 +43,7 @@ edges:
 
 declarations:
     - 
-        name: vino-secgroup
+        name: vino-secgroup2
         type: security-group
         description: security group for vino 
         ingress: 
